@@ -2,15 +2,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var squareBody = document.querySelector('.square-body');
     if (!squareBody) return;
 
-    var initialOrder = Array.prototype.slice.call(squareBody.children);
-    var currentOrder = initialOrder.slice();
+    var initialOrder = [];
+    var currentOrder = [];
+    var children = squareBody.children;
+
+    for (var i = 0; i < children.length; i++) {
+        initialOrder.push(children[i]);
+        currentOrder.push(children[i]);
+    }
 
     var resetBtn = document.querySelector('.btn-reset');
     if (resetBtn) {
         resetBtn.addEventListener('click', function() {
-            currentOrder = initialOrder.slice();
-            for (var i = 0; i < currentOrder.length; i++) {
-                squareBody.appendChild(currentOrder[i]);
+            for (var i = 0; i < initialOrder.length; i++) {
+                currentOrder[i] = initialOrder[i];
+                squareBody.appendChild(initialOrder[i]);
             }
         });
     }
@@ -22,8 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
         var block = arrow.closest('.block');
         if (!block) return;
 
-        var blocks = Array.prototype.slice.call(squareBody.children);
-        var idx = blocks.indexOf(block);
+        var idx = -1;
+        for (var i = 0; i < currentOrder.length; i++) {
+            if (currentOrder[i] === block) {
+                idx = i;
+                break;
+            }
+        }
         if (idx === -1) return;
 
         var targetIdx = -1;
@@ -38,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             targetIdx = idx + 1;
         }
 
-        if (targetIdx >= 0 && targetIdx < blocks.length) {
+        if (targetIdx >= 0 && targetIdx < currentOrder.length) {
             var temp = currentOrder[idx];
             currentOrder[idx] = currentOrder[targetIdx];
             currentOrder[targetIdx] = temp;
