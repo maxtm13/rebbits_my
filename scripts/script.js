@@ -1,30 +1,32 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const squareBody = document.querySelector('.square-body');
+document.addEventListener('DOMContentLoaded', function() {
+    var squareBody = document.querySelector('.square-body');
     if (!squareBody) return;
 
-    const initialOrder = Array.from(squareBody.children);
-    let currentOrder = [...initialOrder];
+    var initialOrder = Array.prototype.slice.call(squareBody.children);
+    var currentOrder = initialOrder.slice();
 
-    const resetBtn = document.querySelector('.btn-reset');
+    var resetBtn = document.querySelector('.btn-reset');
     if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            currentOrder = [...initialOrder];
-            squareBody.replaceChildren(...currentOrder);
+        resetBtn.addEventListener('click', function() {
+            currentOrder = initialOrder.slice();
+            for (var i = 0; i < currentOrder.length; i++) {
+                squareBody.appendChild(currentOrder[i]);
+            }
         });
     }
 
-    squareBody.addEventListener('click', (e) => {
-        const arrow = e.target.closest('.arrow');
+    squareBody.addEventListener('click', function(e) {
+        var arrow = e.target.closest('.arrow');
         if (!arrow) return;
 
-        const block = arrow.closest('.block');
+        var block = arrow.closest('.block');
         if (!block) return;
 
-        const blocks = Array.from(squareBody.children);
-        const idx = blocks.indexOf(block);
+        var blocks = Array.prototype.slice.call(squareBody.children);
+        var idx = blocks.indexOf(block);
         if (idx === -1) return;
 
-        let targetIdx = -1;
+        var targetIdx = -1;
 
         if (arrow.classList.contains('top')) {
             targetIdx = idx - 5;
@@ -37,11 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (targetIdx >= 0 && targetIdx < blocks.length) {
-            const temp = currentOrder[idx];
+            var temp = currentOrder[idx];
             currentOrder[idx] = currentOrder[targetIdx];
             currentOrder[targetIdx] = temp;
 
-            squareBody.replaceChildren(...currentOrder);
+            for (var j = 0; j < currentOrder.length; j++) {
+                squareBody.appendChild(currentOrder[j]);
+            }
         }
     });
 });
