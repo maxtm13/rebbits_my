@@ -1,62 +1,49 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var squareBody = document.querySelector('.square-body');
-    if (!squareBody) return;
+"use strict";
 
-    var initialOrder = [];
-    var currentOrder = [];
-    var children = squareBody.children;
+const blocks = document.querySelectorAll(".block");
+const resetBtn = document.querySelector("button.btn-reset");
 
-    for (var i = 0; i < children.length; i++) {
-        initialOrder.push(children[i]);
-        currentOrder.push(children[i]);
+const renderBlocks = (oldindex, newindex) => {
+  if (oldindex === newindex) {
+    return;
+  }
+  let oldBlock = blocks[oldindex];
+  let oldBlockText = oldBlock.querySelector(".block-number").innerText;
+  let newBlock = blocks[newindex];
+  let newBlockText = newBlock.querySelector(".block-number").innerText;
+
+  blocks[newindex].querySelector(".block-number").innerText = oldBlockText;
+  blocks[oldindex].querySelector(".block-number").innerText = newBlockText;
+};
+blocks.forEach((block, index) => {
+  block.addEventListener("click", (e) => {
+    let currentIndex = index;
+    let newIndex = index;
+    if (e.target.closest(".arrow.right")) {
+      newIndex++;
+      newIndex = newIndex <= blocks.length ? newIndex : newIndex - 1;
+      renderBlocks(currentIndex, newIndex);
     }
-
-    var resetBtn = document.querySelector('.btn-reset');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function() {
-            for (var i = 0; i < initialOrder.length; i++) {
-                currentOrder[i] = initialOrder[i];
-                squareBody.appendChild(initialOrder[i]);
-            }
-        });
+    if (e.target.closest(".arrow.left")) {
+      newIndex--;
+      newIndex = newIndex < 0 ? 0 : newIndex;
+      renderBlocks(currentIndex, newIndex);
     }
-
-    squareBody.addEventListener('click', function(e) {
-        var arrow = e.target.closest('.arrow');
-        if (!arrow) return;
-
-        var block = arrow.closest('.block');
-        if (!block) return;
-
-        var idx = -1;
-        for (var i = 0; i < currentOrder.length; i++) {
-            if (currentOrder[i] === block) {
-                idx = i;
-                break;
-            }
-        }
-        if (idx === -1) return;
-
-        var targetIdx = -1;
-
-        if (arrow.classList.contains('top')) {
-            targetIdx = idx - 5;
-        } else if (arrow.classList.contains('bottom')) {
-            targetIdx = idx + 5;
-        } else if (arrow.classList.contains('left')) {
-            targetIdx = idx - 1;
-        } else if (arrow.classList.contains('right')) {
-            targetIdx = idx + 1;
-        }
-
-        if (targetIdx >= 0 && targetIdx < currentOrder.length) {
-            var temp = currentOrder[idx];
-            currentOrder[idx] = currentOrder[targetIdx];
-            currentOrder[targetIdx] = temp;
-
-            for (var j = 0; j < currentOrder.length; j++) {
-                squareBody.appendChild(currentOrder[j]);
-            }
-        }
-    });
+    if (e.target.closest(".arrow.top")) {
+      newIndex = newIndex - 5;
+      newIndex = newIndex < 0 ? currentIndex : newIndex;
+      renderBlocks(currentIndex, newIndex);
+    }
+    if (e.target.closest(".arrow.bottom")) {
+      newIndex = newIndex + 5;
+      newIndex = newIndex >= blocks.length ? currentIndex : newIndex;
+      renderBlocks(currentIndex, newIndex);
+    }
+  });
+});
+resetBtn.addEventListener("click", () => {
+  blocks.forEach((block, index) => {
+    index++;
+    block.querySelector(".block-number").innerText = index;
+  });
 });
