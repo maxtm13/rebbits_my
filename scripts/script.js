@@ -21,7 +21,7 @@ blocks.forEach((block, index) => {
     let newIndex = index;
     if (e.target.closest(".arrow.right")) {
       newIndex++;
-      newIndex = newIndex <= blocks.length ? newIndex : newIndex - 1;
+      newIndex = newIndex < blocks.length ? newIndex : newIndex - 1;
       renderBlocks(currentIndex, newIndex);
     }
     if (e.target.closest(".arrow.left")) {
